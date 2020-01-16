@@ -13,8 +13,8 @@
                     myPlayer.catalog.getVideo('6068224625001', function(error, video3){
                         var videoList = [video,video2, video3];
                         //console.log('videoList', videoList);
-                        //myPlayer.playlist(videoList);
-                        myPlayer.catalog.load(videoList, function() {
+                        myPlayer.playlist(videoList, 1, function() {
+                        //myPlayer.catalog.load(videoList, function() {
                             myPlayer.on(autoPlayEvents, autoplayableListener);
                         });
                     });
@@ -61,6 +61,9 @@
 	</video-js>
   </div>
   <script src="//players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
-  <br/>Potential issues: playlist was flashed at the beginning of the right hand side of the player.
+  <br/>In this demo, we insert an array of videos to the discovery/playlist dynamically.
+  <br/>We also tell the playlist to start from secdon video instead of the first in the list.
+  <br/>We can configure to tell the play to keep looping on the playlist infinitely or not.
+  <br/>Potential issues: pay attention when the video player first loaded, the playlist flashed at the beginning of the right hand side of the player.
 </body>
 </html>
