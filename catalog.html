@@ -5,17 +5,22 @@
         $(document).ready(function() {
             var myPlayer = videojs.getPlayer('vjs_video_3');
             var autoPlayEvents = ['loadedmetadata', 'durationchange'];
-            myPlayer.on(autoPlayEvents, autoplayableListener);
 
-            myPlayer.catalog.getVideo('6075437543001', function(error, video){
-                //deal with error
-                //myPlayer.catalog.load(video);
-                video.description = 'testing';
-                var videoList = [video,video];
-                console.log('videoList', videoList);
-                myPlayer.playlist(video);
+            // better use API search instead of getVideo one by one
+            // keep in mind that search-enable search key must be on server side for security reason
+            myPlayer.catalog.getVideo('1649378259040711029', function(error, video){
+                myPlayer.catalog.getVideo('1649292380622223566', function(error, video2){
+                    myPlayer.catalog.getVideo('6068224625001', function(error, video3){
+                        var videoList = [video,video2, video3];
+                        //console.log('videoList', videoList);
+                        //myPlayer.playlist(videoList);
+                        myPlayer.catalog.load(videoList, function() {
+                            myPlayer.on(autoPlayEvents, autoplayableListener);
+                        });
+                    });
+                });
             });
-        
+                    
             function autoplayableListener(event) {
                 console.log(event.type);
                 // for live videos we want to listen for durationchange
@@ -36,7 +41,7 @@
                     // Autoplay started!
                     }).
                     catch (function (error) {
-                    // Autoplay was prevented.
+                        alert('Autoplay was prevented, write codes here to handle.');
                     });
                 }
             }
@@ -51,12 +56,11 @@
 		data-player="ky26UIyke"
 		data-embed="default"
 		controls=""
-		data-video-id=""
-		data-playlist-id="1647696977652949689"
 		data-application-id=""
 		class="vjs-fluid">
 	</video-js>
   </div>
   <script src="//players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
+  <br/>Potential issues: playlist was flashed at the beginning of the right hand side of the player.
 </body>
 </html>
