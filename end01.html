@@ -8,6 +8,8 @@
 
             myPlayer.on('ended', function() {
                 alert('Finished Playing!!!');
+
+                myPlayer.off('ended');
             });
 
             // better use API search instead of getVideo one by one
@@ -65,11 +67,7 @@
 	</video-js>
   </div>
   <script src="//players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
-  <br/>Brightcove currently does not offer a discovery feature, however we have the playlists, you can create a playlist by adding the videos manually or using tags. 
-  <br/>We can configure the playlist to start from second video instead of the first in the list - which can be useful to keep the same playlist across the redirections
-  <br/>We can configure to tell the play to keep looping on the playlist infinitely or not.
-  <br/>
-  <br/>Issue: pay attention when the video player first loaded, the playlist flashed at the beginning of the right hand side of the player.
-  <br/>Issue: the social media at the end is blocking the screen, we can disable it on Brightcover Cloud "Player->End Screen" section.
+  <br/>Read this <a href="https://support.brightcove.com/brightcove-player-sample-navigate-video-end">to customize the end screen HTML</a>
+  <br/>Combine with what you see in this demo, we can easily control how the video player redirects the page.
 </body>
 </html>

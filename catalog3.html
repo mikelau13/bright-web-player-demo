@@ -14,7 +14,7 @@
     /* override playlist styles */
     .vjs-playlist {
       width: 240px;
-      height: 279px;
+      height: 261px;
     }
   </style>
 </head>
@@ -31,6 +31,7 @@
     class="video-js"
     controls></video-js>
   <!-- Element added to specify the location of the playlist -->
+  playlist is a separated div
   <div class="vjs-playlist"></div>
 
   <script src="https://players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
@@ -46,11 +47,12 @@
                 console.log('videoList', videoList);
                 myPlayer.catalog.load(videoList);
                 //myPlayer.playlist(videoList);
+                //myPlayer.play();
             });
         });
       });
     });
   </script>
-  <br/>We can insert an array of videos to the discovery/playlist dynamically.
+  <br/>Brightcove currently does not offer a discovery feature, however we have the playlists, you can create a playlist by adding the videos manually or using tags. 
 </body>
 </html>
