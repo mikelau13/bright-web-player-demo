@@ -17,7 +17,7 @@
                     myPlayer.catalog.getVideo('6068224625001', function(error, video3){
                         var videoList = [video,video2, video3];
                         //console.log('videoList', videoList);
-                        myPlayer.playlist(videoList, 1, function() {
+                        myPlayer.playlist(videoList, function() {
                         //myPlayer.catalog.load(videoList, function() {
                             myPlayer.on(autoPlayEvents, autoplayableListener);
                         });
