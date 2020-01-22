@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Most Watched Videos Playlist</title>
+  <style media="screen">
+    /* override player styles */
+    .video-js {
+      height: 279px;
+      width: 496px;
+      float: left;
+    }
+    /* override playlist styles */
+    .vjs-playlist {
+      width: 240px;
+      height: 261px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Player embed code with an id attribute -->
+  <video-js id="myPlayerID"
+    data-video-id="6075417762001"
+    data-account="6057949425001"
+    data-player="ky26UIyke"
+    data-embed="default"
+    data-application-id
+    class="video-js"
+    controls></video-js>
+  <!-- Element added to specify the location of the playlist -->
+  playlist is a separated div
+  <div class="vjs-playlist"></div>
+
+  <script src="https://players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
+
+  <script type="text/javascript">
+    videojs.getPlayer('myPlayerID').ready(function() {
+      var myPlayer = this;
+
+      myPlayer.catalog.getVideo('6068224625001', function(error, video){
+        myPlayer.catalog.getVideo('1649292380622223566', function(error, video2){
+            myPlayer.catalog.getVideo('1649378259040711029', function(error, video3){
+                var videoList = [video,video2, video3];
+                console.log('videoList', videoList);
+                myPlayer.catalog.load(videoList);
+                //myPlayer.playlist(videoList);
+                //myPlayer.play();
+            });
+        });
+      });
+    });
+  </script>
+  <br/>Brightcove currently does not offer a discovery feature, however we have the playlists, you can create a playlist by adding the videos manually or using tags. 
+</body>
+</html>

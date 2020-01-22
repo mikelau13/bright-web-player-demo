@@ -1,0 +1,132 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <style>
+        .vjs-overlay,
+        .vjs-overlay.vjs-overlay-top-left {
+            width: 100%;
+            height: 100%;
+            color: #FFF;
+            background-color: rgba(255, 255, 255, 0.6);
+            left: 0;
+            top: 0;
+            padding-top: 100px;
+            font-size: 24px;
+            text-align: center;
+            padding-left: 0;
+        }
+        /* hide the control bar and big play button */
+        .video-agelist.video-js .vjs-control-bar,
+        .video-agelist .vjs-big-play-button {
+            display: none;
+        }
+        /* set cursor for overlay text */
+        #ageGateButton {
+            cursor: pointer;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var myPlayer, eAgeGateButton;
+            var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+
+            videojs.getPlayer('myPlayerID').ready(function() {
+                // Get a reference to the player when it is ready
+                myPlayer = this;
+
+                // Add the class which hides the player controls and the big play button
+                myPlayer.addClass("video-agelist");
+                $(".vjs-playlist-sidebar").hide();
+                console.log('myPlayerID ready');
+                // +++ Set up listening for when the user clicks the age verification text +++
+                // Listen for when the player has initial duration and dimension information
+                //myPlayer.on("loadedmetadata", function() {
+                    console.log('loadedmetadata');
+                    // Get a reference to the age verification text in the overlay
+                    eAgeGateButton = document.getElementById("ageGateButton");
+
+                    console.log('eAgeGateButton', eAgeGateButton);
+                    // 
+                    // Listen for age verification text click events
+                    eAgeGateButton.addEventListener("click", function() {
+                        // Remove the class which hides the player controls and the big play button
+                        console.log('click');
+                        myPlayer.removeClass("video-agelist");
+                        $(".vjs-overlay").hide();
+                        $(".vjs-playlist-sidebar").show();
+                        // Start video playback
+                        myPlayer.catalog.getVideo('1649378259040711029', function(error, video){
+                            myPlayer.catalog.getVideo('1649292380622223566', function(error, video2){
+                                myPlayer.catalog.getVideo('6068224625001', function(error, video3){
+                                    var videoList = [video,video2, video3];
+                                    console.log('videoList', videoList);
+                                    //myPlayer.playlist(videoList, function() {
+                                    myPlayer.catalog.load(videoList, function() {
+                                        myPlayer.on(autoPlayEvents, autoplayableListener);
+                                        //myPlayer.play();
+                                    });
+                                });
+                            });
+                        });
+                        //myPlayer.play();
+                    });
+                //});
+
+                function autoplayableListener(event) {
+                    console.log(event.type);
+                    // for live videos we want to listen for durationchange
+                    if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                        attemptAutoplay();
+                        myPlayer.off(autoPlayEvents, autoplayableListener);
+                    }
+                    if (event.type === 'loadedmetadata') {
+                        attemptAutoplay();
+                        myPlayer.off(autoPlayEvents, autoplayableListener);
+                    }
+                }
+            
+                function attemptAutoplay() {
+                    var promise = myPlayer.play();
+                    if (promise !== undefined) {
+                        promise.then(function () {
+                        // Autoplay started!
+                        }).
+                        catch (function (error) {
+                            alert('Autoplay was prevented, write codes here to handle.');
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+  <!-- advanced embed codes, better controls for developers -->
+  <div class="vjs-playlist-player-container" style="max-width: 960px;">
+    <video-js  
+      id="myPlayerID"
+      data-account="6057949425001"
+      data-player="5iLQeK5T"
+      data-embed="default"
+      controls=""
+      data-application-id=""
+      class="vjs-fluid"></video-js>
+  </div>
+  <script src="//players.brightcove.net/6057949425001/5iLQeK5T_default/index.min.js"></script>
+  <script>
+    videojs.registerPlugin('ageGatePlugin', function() {
+        var player = this,
+        overlay = document.createElement('p');
+        overlay.className = 'vjs-overlay';
+        overlay.innerHTML = "<div id='ageGateButton'>By clicking here you certify that you are over 18 years old</div>";
+        player.el().appendChild(overlay);
+    });
+    videojs.getPlayer('myPlayerID').ageGatePlugin();  
+  </script>
+  <br/><a href="https://support.brightcove.com/brightcove-player-sample-age-gate">Documentations of Age Gate</a>
+  <br/><a href="https://support.brightcove.com/step-step-plugin-development">Plugins development</a>
+  <br/>(dbo.Media.isMature)
+  <br/><div style="height: 1000px; ">Testing vertical content</div>
+
+</body>
+</html>

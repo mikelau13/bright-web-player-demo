@@ -1,0 +1,75 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var myPlayer = videojs.getPlayer('vjs_video_3');
+            var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+
+            myPlayer.on('ended', function() {
+                alert('Finished Playing!!!');
+            });
+
+            // better use API search instead of getVideo one by one
+            // keep in mind that search-enable search key must be on server side for security reason
+            myPlayer.catalog.getVideo('1649378259040711029', function(error, video){
+                myPlayer.catalog.getVideo('1649292380622223566', function(error, video2){
+                    myPlayer.catalog.getVideo('6068224625001', function(error, video3){
+                        var videoList = [video,video2, video3];
+                        //console.log('videoList', videoList);
+                        myPlayer.playlist(videoList, function() {
+                        //myPlayer.catalog.load(videoList, function() {
+                            myPlayer.on(autoPlayEvents, autoplayableListener);
+                        });
+                    });
+                });
+            });
+                    
+            function autoplayableListener(event) {
+                console.log(event.type);
+                // for live videos we want to listen for durationchange
+                if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+                if (event.type === 'loadedmetadata') {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+            }
+        
+            function attemptAutoplay() {
+                var promise = myPlayer.play();
+                if (promise !== undefined) {
+                    promise.then(function () {
+                    // Autoplay started!
+                    }).
+                    catch (function (error) {
+                        alert('Autoplay was prevented, write codes here to handle.');
+                    });
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+  <!-- advanced embed codes, better controls for developers -->
+  <div class="vjs-playlist-player-container" style="max-width: 960px;">
+	<video-js
+		data-account="6057949425001"
+		data-player="ky26UIyke"
+		data-embed="default"
+		controls=""
+		data-application-id=""
+		class="vjs-fluid">
+	</video-js>
+  </div>
+  <script src="//players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
+  <br/>Brightcove currently does not offer a discovery feature, however we have the playlists, you can create a playlist by adding the videos manually or using tags. 
+  <br/>We can configure the playlist to start from second video instead of the first in the list - which can be useful to keep the same playlist across the redirections
+  <br/>We can configure to tell the play to keep looping on the playlist infinitely or not.
+  <br/>
+  <br/>Issue: pay attention when the video player first loaded, the playlist flashed at the beginning of the right hand side of the player.
+  <br/>Issue: the social media at the end is blocking the screen, we can disable it on Brightcover Cloud "Player->End Screen" section.
+</body>
+</html>

@@ -1,0 +1,70 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var myPlayer = videojs.getPlayer('vjs_video_3');
+            var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+
+            myPlayer.on(autoPlayEvents, autoplayableListener);
+
+            bindStopPlaying();
+            bindStartPlaying();
+                    
+            function autoplayableListener(event) {
+                console.log(event.type);
+                // for live videos we want to listen for durationchange
+                if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+                if (event.type === 'loadedmetadata') {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+            }
+        
+            function attemptAutoplay() {
+                var promise = myPlayer.play();
+                if (promise !== undefined) {
+                    promise.then(function () {
+                    // Autoplay started!
+                    }).
+                    catch (function (error) {
+                        alert('Autoplay was prevented, write codes here to handle.');
+                    });
+                }
+            }
+
+            function bindStopPlaying(){
+                $('#text01').click(function() {
+                    myPlayer.pause();
+                });
+            }
+
+            function bindStartPlaying(){
+                $('#button01').click(function() {
+                    myPlayer.play();
+                    $('#text01').val('');
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+  <!-- advanced embed codes, better controls for developers -->
+  <div class="vjs-playlist-player-container" style="max-width: 960px;">
+    <video-js
+        data-video-id="6075417762001"
+		data-account="6057949425001"
+		data-player="ky26UIyke"
+		data-embed="default"
+		controls=""
+		data-application-id=""
+		class="vjs-fluid">
+	</video-js>
+  </div>
+  <script src="//players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
+  <br/><input type="text" id="text01" placeholder="type here to stop playing" /><input type="button" value="Click to resume video" id="button01" />
+</body>
+</html>
