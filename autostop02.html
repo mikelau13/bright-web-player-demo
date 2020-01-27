@@ -1,0 +1,73 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var myPlayer = videojs.getPlayer('vjs_video_3');
+            var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+
+            myPlayer.on(autoPlayEvents, autoplayableListener);
+
+            $(window).scroll(function() {
+                var hT = $('#scroll-to').offset().top,
+                    hH = $('#scroll-to').outerHeight(),
+                    wH = $(window).height(),
+                    wS = $(this).scrollTop()
+                    vH = $('#vjs_video_3').outerHeight();
+                console.log('scrolling', hT + ' ' + hH + ' ' + wH + ' ' + wS + ' ' + vH);
+                console.log('hT+hH-wH', hT+hH-wH);
+                console.log('hT > wS', hT > wS);
+                console.log('wS+wH', wS+wH);
+                console.log('hT+hH', hT+hH);
+                if (wS > (hT+hH-wH) && (hT > wS) && (wS+wH > hT+hH)){
+                    myPlayer.play();
+                } else {
+                    myPlayer.pause();
+                }
+            });
+                   
+            function autoplayableListener(event) {
+                console.log(event.type);
+                // for live videos we want to listen for durationchange
+                if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+                if (event.type === 'loadedmetadata') {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+            }
+        
+            function attemptAutoplay() {
+                var promise = myPlayer.play();
+                if (promise !== undefined) {
+                    promise.then(function () {
+                    // Autoplay started!
+                    }).
+                    catch (function (error) {
+                        alert('Autoplay was prevented, write codes here to handle.');
+                    });
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+  <div class="vjs-playlist-player-container" style="max-width: 960px;">
+    <video-js
+        data-video-id="6075417762001"
+		data-account="6057949425001"
+		data-player="ky26UIyke"
+		data-embed="default"
+		controls=""
+		data-application-id=""
+		class="vjs-fluid">
+	</video-js>
+  </div>
+  <script src="//players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
+  <div style="height: 700px; "></div>
+  <h1 id="scroll-to">Comments</h1>
+  <div style="height: 700px; "></div>
+</body>
+</html>

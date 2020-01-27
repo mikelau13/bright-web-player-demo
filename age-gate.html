@@ -36,7 +36,8 @@
 
                 // Add the class which hides the player controls and the big play button
                 myPlayer.addClass("video-agelist");
-                $(".vjs-playlist-sidebar").hide();
+                //$(".vjs-playlist-sidebar").hide();
+                $(".vjs-playlist-sidebar").css('z-index', 3000);
                 console.log('myPlayerID ready');
                 // +++ Set up listening for when the user clicks the age verification text +++
                 // Listen for when the player has initial duration and dimension information
@@ -53,7 +54,6 @@
                         console.log('click');
                         myPlayer.removeClass("video-agelist");
                         $(".vjs-overlay").hide();
-                        $(".vjs-playlist-sidebar").show();
                         // Start video playback
                         myPlayer.catalog.getVideo('1649378259040711029', function(error, video){
                             myPlayer.catalog.getVideo('1649292380622223566', function(error, video2){
@@ -61,6 +61,8 @@
                                     var videoList = [video,video2, video3];
                                     console.log('videoList', videoList);
                                     //myPlayer.playlist(videoList, function() {
+                                    //$(".vjs-playlist-sidebar").show();
+                                    $(".vjs-playlist-sidebar").css('z-index', 1);
                                     myPlayer.catalog.load(videoList, function() {
                                         myPlayer.on(autoPlayEvents, autoplayableListener);
                                         //myPlayer.play();
