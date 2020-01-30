@@ -1,0 +1,98 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var myPlayer = videojs.getPlayer('vjs_video_3');
+            var newElement = document.createElement('div');
+            newElement.innerHTML = 
+                '<div class="ageCheckContainerInner">' + 
+                    '<p><strong>VIDEO FOR MATURE AUDIENCES</strong></p>' +
+                    '<p>You must be 18 years or <br> older to view this video.</p>' +
+                    '<p>' +
+                        'Please confirm: <br>' +
+                        '<input type="checkbox"> I am 18 years or older ' +
+                    '</p>' +
+                    '<p><input type="button" value="Confirm" disabled=""></p>' +
+                '</div>'
+            ;
+        
+            //newElement.id = "theModal";
+            var options = {};
+            options.content = newElement;
+            //options.label = 'labelX';
+            options.temporary = true; // If true the modal can only be opened once; it will be disposed as soon as it's closed
+            options.uncloseable = true; // If true the user will not be able to close the modal through the UI in the normal ways; programmatic closing is still possible
+
+            var ModalDialog = videojs.getComponent('ModalDialog');
+            var myModal = new ModalDialog(myPlayer, options);
+            myPlayer.addChild(myModal);
+            myModal.open();
+
+            myPlayer.ready(function() {
+                $('.ageCheckContainerInner :checkbox').change(function() {
+                    $('.ageCheckContainerInner :button').attr("disabled", !this.checked);
+                });
+
+                $('.ageCheckContainerInner :button').click(function () {
+                    myModal.close();
+                    myPlayer.play();
+                });
+            });
+
+            // myModal.on("click", function(){
+            //     // Close the ModalDialog
+            //     myModal.close();
+            //     // Start video playback
+            //     myPlayer.play();
+            // });
+
+            //var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+            //myPlayer.on(autoPlayEvents, autoplayableListener);         
+
+            function ClickMatureContent(){
+                alert('x');
+            } 
+        
+            function autoplayableListener(event) {
+                console.log(event.type);
+                // for live videos we want to listen for durationchange
+                if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+                if (event.type === 'loadedmetadata') {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+            }
+        
+            function attemptAutoplay() {
+                var promise = myPlayer.play();
+                if (promise !== undefined) {
+                    promise.then(function () {
+                    // Autoplay started!
+                    }).
+                    catch (function (error) {
+                    // Autoplay was prevented.
+                    });
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+  <div style="max-width: 960px;">
+    <h1>Using player "Tribute Player - Testing"</h1>
+    <video-js
+      data-video-id="6127860955001"
+      data-account="6057949425001"
+      data-player="5iLQeK5T"
+      data-embed="default"
+      controls=""
+      data-application-id=""
+      class="vjs-fluid"></video-js>
+  </div>
+  <script src="//players.brightcove.net/6057949425001/5iLQeK5T_default/index.min.js?version=6"></script>
+</body>
+</html>
