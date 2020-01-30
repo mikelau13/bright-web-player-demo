@@ -5,16 +5,16 @@
         $(document).ready(function() {
             var myPlayer = videojs.getPlayer('vjs_video_3');
             var newElement = document.createElement('div');
+            newElement.setAttribute("id", "ageCheckContainer");
+            newElement.setAttribute("style", "background-color: black;height:100%;width=100%;");
             newElement.innerHTML = 
-                '<div class="ageCheckContainerInner">' + 
                     '<p><strong>VIDEO FOR MATURE AUDIENCES</strong></p>' +
                     '<p>You must be 18 years or <br> older to view this video.</p>' +
                     '<p>' +
                         'Please confirm: <br>' +
                         '<input type="checkbox"> I am 18 years or older ' +
                     '</p>' +
-                    '<p><input type="button" value="Confirm" disabled=""></p>' +
-                '</div>'
+                    '<p><input type="button" value="Confirm" disabled=""></p>'
             ;
         
             //newElement.id = "theModal";
@@ -30,29 +30,18 @@
             myModal.open();
 
             myPlayer.ready(function() {
-                $('.ageCheckContainerInner :checkbox').change(function() {
-                    $('.ageCheckContainerInner :button').attr("disabled", !this.checked);
+                $('#ageCheckContainer :checkbox').change(function() {
+                    $('#ageCheckContainer :button').attr("disabled", !this.checked);
                 });
 
-                $('.ageCheckContainerInner :button').click(function () {
+                $('#ageCheckContainer :button').click(function () {
                     myModal.close();
                     myPlayer.play();
                 });
             });
 
-            // myModal.on("click", function(){
-            //     // Close the ModalDialog
-            //     myModal.close();
-            //     // Start video playback
-            //     myPlayer.play();
-            // });
-
             //var autoPlayEvents = ['loadedmetadata', 'durationchange'];
             //myPlayer.on(autoPlayEvents, autoplayableListener);         
-
-            function ClickMatureContent(){
-                alert('x');
-            } 
         
             function autoplayableListener(event) {
                 console.log(event.type);
