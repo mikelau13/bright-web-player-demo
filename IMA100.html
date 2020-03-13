@@ -1,0 +1,117 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Google IMA Inline</title>
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/cuepoints.css">
+  <link href="https://players.brightcove.net/videojs-ima3/3/videojs.ima3.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light static-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"><img src="https://upload.wikimedia.org/wikipedia/en/6/64/Brightcove_logo.svg" alt=""></a>
+      </div>
+    </nav>
+        <div class="row mt-3">
+          <div class="col"></div>
+          <div class="col">
+            <!--
+              This is the VOD player loading when the page loads. It is using a player that has CSAI enabled on VideoCloud. 
+              Notice we are also loading the videojs-ima3 JS and CSS plugin files on the client side. 
+
+              See: https://support.brightcove.com/advertising-ima3-plugin - "Hybrid implementation" section 
+ 
+             -->
+            <div id="placeHolder" style="position: relative; display: block; max-width: 750px;">
+              <video-js 
+                data-account="6030890615001" 
+                id="myPlayerID"
+                data-player="ARfxaSrA" 
+                data-embed="default" 
+                controls=""
+                data-video-id="6056596610001" 
+                data-playlist-id="" 
+                data-application-id="" 
+                width="960" 
+                class="video-js"
+                height="540">
+              </video-js>
+            </div>
+            <script src="https://players.brightcove.net/6030890615001/ARfxaSrA_default/index.min.js"></script>
+            <script src="https://players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js"></script>
+            <script type="text/javascript">
+              var myPlayer;
+              /*
+                The bc player has to be initialized and then the Ad url is passed using the ima3 method. This is still for the VOD asset. 
+                See: https://support.brightcove.com/advertising-ima3-plugin#Implement_using_code
+              */
+              var player = bc('myPlayerID');
+              player.ima3({
+                serverUrl: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator='
+              });
+
+              var myPlayer = videojs.getPlayer("myPlayerID"),
+  volumeLevel = 0.7;
+
+// +++ Wait for loadedmetadata then try to play video +++
+myPlayer.on("loadedmetadata", function() {
+  // Play video which returns a promise
+  var promise = myPlayer.play();
+  console.log("promise", promise);
+
+  // +++ Use promise to see if video is playing or not +++
+  if (promise !== undefined) {
+    promise
+      .then(function() {
+        // Autoplay started!
+        // If video playing unmute and set the volume
+        myPlayer.muted(false);
+        myPlayer.volume(volumeLevel);
+      })
+      .catch(function(error) {
+        // Autoplay was prevented.
+        // // +++ If autoplay prevented mute the video, play video and display unmute button +++
+        myPlayer.ima3.settings.serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=';
+        myPlayer.ima3.adrequest();
+        myPlayer.muted(true);
+        myPlayer.play();
+
+        var button = document.createElement("button");
+
+        // +++ Add button's event listener +++
+        button.addEventListener("click", function() {
+          myPlayer.muted(false);
+          myPlayer.volume(volumeLevel);
+          playerContainer.removeChild(button);
+        });
+
+        // +++ Configure the button +++
+        button.textContent = "Unmute";
+        button.classList.add("inner");
+        button.setAttribute(
+          "style",
+          "color:black; background-color:red; width:100px; height:50px; opacity: .4;"
+        );
+
+        // +++ Add the button to the container +++
+        myPlayerID.appendChild(button);
+      });
+  }
+});
+            </script>
+
+          </div>
+          <div class="col"> 
+          </div>
+        </div>
+</body>
+  <!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.slim.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</html>

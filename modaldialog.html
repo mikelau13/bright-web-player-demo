@@ -4,6 +4,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             var myPlayer = videojs.getPlayer('vjs_video_3');
+
+            // START modal codes
             var newElement = document.createElement('div');
             newElement.setAttribute("id", "ageCheckContainer");
             newElement.setAttribute("style", "background-color: black;height:100%;width=100%;");
@@ -39,6 +41,8 @@
                     myPlayer.play();
                 });
             });
+
+            // END modal codes
 
             //var autoPlayEvents = ['loadedmetadata', 'durationchange'];
             //myPlayer.on(autoPlayEvents, autoplayableListener);         

@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Google IMA Inline</title>
+  <link href="https://players.brightcove.net/videojs-ima3/3/videojs.ima3.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light static-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"><img src="https://upload.wikimedia.org/wikipedia/en/6/64/Brightcove_logo.svg" alt=""></a>
+      </div>
+    </nav>
+        <div class="row mt-3">
+          <div class="col"></div>
+          <div class="col">
+            <!--
+              This is the VOD player loading when the page loads. It is using a player that has CSAI enabled on VideoCloud. 
+              Notice we are also loading the videojs-ima3 JS and CSS plugin files on the client side. 
+
+              See: https://support.brightcove.com/advertising-ima3-plugin - "Hybrid implementation" section 
+ 
+             -->
+            <a href="IMA.html" style="font-size: 40px;">User Interaction</a>
+            <div id="placeHolder" style="position: relative; display: block; max-width: 750px;">
+              <video-js 
+                data-account="6030890615001" 
+                id="myPlayerID"
+                data-player="ARfxaSrA" 
+                data-embed="default" 
+                controls=""
+                data-video-id="6056596610001" 
+                data-playlist-id="" 
+                data-application-id="" 
+                width="960" 
+                class="video-js"
+                height="540">
+              </video-js>
+            </div>
+            <script src="https://players.brightcove.net/6030890615001/ARfxaSrA_default/index.min.js"></script>
+            <script src="https://players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js"></script>
+            <script type="text/javascript">
+              var myPlayer;
+              /*
+                The bc player has to be initialized and then the Ad url is passed using the ima3 method. This is still for the VOD asset. 
+                See: https://support.brightcove.com/advertising-ima3-plugin#Implement_using_code
+              */
+              var serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/26924457/tribute&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp];alias=tribute_player;size=480x360;key=action/adventure;kvmovieid=137928;kvmovietitle=sonic-the-hedgehog;kvclipid=25671;kvcliptitle=sonic-the-hedgehog-trailer-2;kvmature=0;kvlength=long;misc=1582909536025;aduho=-300'; // tribute ad
+              // Antonio's preroll
+              //var serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=';
+              var player = bc('myPlayerID');
+              player.ima3({
+                serverUrl: serverUrl
+              });
+
+              var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+              player.on(autoPlayEvents, autoplayableListener);
+
+                // better use API search instead of getVideo one by one
+                // keep in mind that search-enable search key must be on server side for security reason
+
+                function autoplayableListener(event) {
+                    // for live videos we want to listen for durationchange
+                    if (event.type === 'durationchange' && player.duration() === Infinity) {
+                        attemptAutoplay();
+                        player.off(autoPlayEvents, autoplayableListener);
+                    }
+                    if (event.type === 'loadedmetadata') {
+                        attemptAutoplay();
+                        player.off(autoPlayEvents, autoplayableListener);
+                    }
+                }
+
+                function attemptAutoplay() {
+                    var promise = player.play();
+                    /* Listen for ads-ad-started, we really do anything when this is triggered */
+                    player.on('ads-ad-started', function (evt) {
+                        console.log('ads-ad-started event passed to event handler', evt);
+                    });
+                    if (promise !== undefined) {
+                        promise.then(function () {
+                            // Autoplay started!
+                        }).catch(function (error) {
+                            player.muted(true);
+                            player.play();
+                        });
+                    }
+                }
+            </script>
+
+          </div>
+          <div class="col"> 
+          </div>
+        </div>
+</body>
+</html>

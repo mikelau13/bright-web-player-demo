@@ -1,0 +1,94 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
+<body>
+  <h1><a href="playlist03.html">Click to have "user interaction"</a></h1>
+  <h2><a href="1650009287581049525.html">Click to watch 1650009287581049525 - Sonic the Hedgehog</a></h2>
+  <div class="vjs-playlist-player-container" id="brightcove-player-container"></div>
+  <script type="text/javascript">
+    function BindVideoPlayer() {
+        var newElement = document.createElement('div');
+        //newElement.setAttribute("id", "vjs_video_3");
+        newElement.innerHTML =
+            '<video-js id="vjs_video_3"' +
+                'data-account="6057949425001"' +
+                'data-player="Lvxn0Ms6w"' +
+                'data-embed="default"' +
+                'controls=""' +
+                'data-application-id=""' +
+                'class="vjs-fluid"></video-js>'
+        ;
+
+        document.getElementById("brightcove-player-container").appendChild(newElement);
+
+        $.getScript('//players.brightcove.net/6057949425001/Lvxn0Ms6w_default/index.min.js', function () {
+            $.getScript('//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js', function () {
+                var player = videojs.getPlayer('vjs_video_3');
+
+                player.ready(function() {
+                    var myPlayer = this;
+
+                    myPlayer.on('loadstart', function () {
+                        if (myPlayer.mediainfo && myPlayer.mediainfo.customFields) {
+                            myPlayer.mediainfo.customFields.genreName = 'Drama';
+                        }
+                    });
+                
+                    var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+
+                    myPlayer.catalog.getVideo("6075421706001", function(error, video) {
+                        myPlayer.catalog.getPlaylist('1659613093283342265', function (error, endScreenPlaylist) {
+                            endScreenPlaylist.unshift(video);
+                            myPlayer.playlist(endScreenPlaylist, 0);
+                            myPlayer.playlist.autoadvance(5); // Null - Resets and cancels the auto advance
+                            myPlayer.ima3({
+                                //requestMode: 'onplay',
+                                serverUrl: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator='
+                            });
+                            myPlayer.on(autoPlayEvents, autoplayableListener);
+                            myPlayer.on("beforeplaylistitem", function() {
+                                alert('WWWW');
+                            });
+                            myPlayer.on('ended', function() {
+                                //var nextVidObject = myPlayer.playlist.next();
+                                myPlayer.off('ended');
+                            });
+                        });
+                    });
+
+                    function autoplayableListener(event) {
+                        console.log(event.type);
+                        // for live videos we want to listen for durationchange
+                        if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                            attemptAutoplay();
+                            myPlayer.off(autoPlayEvents, autoplayableListener);
+                        }
+                        if (event.type === 'loadedmetadata') {
+                            attemptAutoplay();
+                            myPlayer.off(autoPlayEvents, autoplayableListener);
+                        }
+                    }
+                
+                    function attemptAutoplay() {
+                        var promise = myPlayer.play();
+                        if (promise !== undefined) {
+                            promise.then(function () {
+                            // Autoplay started!
+                            }).
+                            catch (function (error) {
+                                console.log('Autoplay was prevented, write codes here to handle.');
+                            });
+                        }
+                    }
+                });
+            })
+        });
+    }
+
+    $(document).ready(function() {
+        BindVideoPlayer();
+    });
+</script>
+</body>
+</html>

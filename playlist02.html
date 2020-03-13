@@ -5,30 +5,26 @@
         $(document).ready(function() {
             var myPlayer = videojs.getPlayer('vjs_video_3');
             var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+            var serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator='; // BC sample pre-roll
 
-            myPlayer.on('ended', function() {
-                alert('Finished Playing!!!');
-
-                myPlayer.off('ended');
-            });
-
-            // better use API search instead of getVideo one by one
-            // keep in mind that search-enable search key must be on server side for security reason
-            myPlayer.catalog.getVideo('1649378259040711029', function(error, video){
-                myPlayer.catalog.getVideo('1649292380622223566', function(error, video2){
-                    myPlayer.catalog.getVideo('6068224625001', function(error, video3){
-                        var videoList = [video,video2, video3];
-                        //console.log('videoList', videoList);
-                        myPlayer.playlist(videoList, 1, function() {
-                        //myPlayer.catalog.load(videoList, function() {
-                            myPlayer.on(autoPlayEvents, autoplayableListener);
-                        });
+            myPlayer.catalog.getVideo("6075421706001", function(error, video) {
+                myPlayer.catalog.getPlaylist('1659613093283342265', function (error, endScreenPlaylist) {
+                    endScreenPlaylist.unshift(video);
+                    myPlayer.playlist(endScreenPlaylist, 0);
+                    myPlayer.playlist.autoadvance(5); // Null - Resets and cancels the auto advance
+                                       
+                    myPlayer.on(autoPlayEvents, autoplayableListener);
+                    myPlayer.on("beforeplaylistitem", function() {
+                        alert('WWWW');
+                    });
+                    myPlayer.on('ended', function() {
+                        myPlayer.off('ended');
                     });
                 });
             });
-                    
+
+
             function autoplayableListener(event) {
-                console.log(event.type);
                 // for live videos we want to listen for durationchange
                 if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
                     attemptAutoplay();
@@ -55,19 +51,19 @@
     </script>
 </head>
 <body>
-  <!-- advanced embed codes, better controls for developers -->
+  <h1><a href="playlist02.html">Click to have "user interaction"</a></h1>
+  <h2><a href="1650009287581049525.html">Click to watch 1650009287581049525 - Sonic the Hedgehog</a></h2>
   <div class="vjs-playlist-player-container" style="max-width: 960px;">
 	<video-js
 		data-account="6057949425001"
 		data-player="Lvxn0Ms6w"
 		data-embed="default"
 		controls=""
-		data-application-id=""
+        data-application-id=""
 		class="vjs-fluid">
 	</video-js>
   </div>
   <script src="//players.brightcove.net/6057949425001/Lvxn0Ms6w_default/index.min.js"></script>
-  <br/>Read this <a href="https://support.brightcove.com/brightcove-player-sample-navigate-video-end">to customize the end screen HTML</a>
-  <br/>Combine with what you see in this demo, we can easily control how the video player redirects the page.
+  <script src="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js"></script>
 </body>
 </html>

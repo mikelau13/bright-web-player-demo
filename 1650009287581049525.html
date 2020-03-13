@@ -1,0 +1,29 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var myPlayer = videojs.getPlayer('vjs_video_3');
+                    
+            myPlayer.catalog.getVideo("1650009287581049525", function(error, video) {
+                myPlayer.catalog.load(video);
+                myPlayer.play();
+            });
+        });
+    </script>
+</head>
+<body>
+  <!-- advanced embed codes, better controls for developers -->
+  <div class="vjs-playlist-player-container" style="max-width: 960px;">
+	<video-js
+		data-account="6057949425001"
+        data-player="Lvxn0Ms6w"
+		data-embed="default"
+		controls=""
+        data-application-id=""
+		class="vjs-fluid">
+	</video-js>
+  </div>
+  <script src="//players.brightcove.net/6057949425001/Lvxn0Ms6w_default/index.min.js"></script>
+</body>
+</html>

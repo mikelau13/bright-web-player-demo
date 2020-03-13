@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>BrightcoveMedia</title>
+    <link rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link href="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.css" rel="stylesheet">
+</head>
+<body>
+    <a href="final02.html">CLICK HERE to have "User interaction"</a>
+    <span id="lblSite"></span>
+    <div class="row mt-3">
+        <div class="col"></div>
+        <div class="col">
+          <!--
+            This is the VOD player loading when the page loads. It is using a player that has CSAI enabled on VideoCloud. 
+            Notice we are also loading the videojs-ima3 JS and CSS plugin files on the client side. 
+
+            See: https://support.brightcove.com/advertising-ima3-plugin - "Hybrid implementation" section 
+
+           -->
+          <div id="placeHolder" style="position: relative; display: block; max-width: 750px;">
+            <div class="vjs-playlist-player-container">
+                <video-js id="vjs_video_3"
+                        data-account="6057949425001"
+                        data-player="OKoBlfau"
+                        data-video-id="1650009287581049525"
+                        data-embed="default"
+                        controls=""
+                        data-application-id=""
+                        class="vjs-fluid"></video-js>
+            </div>
+            <script src="//players.brightcove.net/6057949425001/OKoBlfau_default/index.min.js"></script>
+            <script src="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js"></script>
+            <script src="final02workflow.js"></script>
+        </div>
+        <div class="col"> 
+        </div>
+      </div>
+</body>
+</html>

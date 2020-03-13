@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>BrightcoveMedia</title>
+    <link rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link href="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <a href="final01.html">CLICK HERE to have "User interaction"</a>
+    <span id="lblSite"></span>
+
+    <script type="text/javascript">
+        function PlayNext(myPlayer, playlistId, brightcoveId, populateEndScreen) { }
+    </script>
+
+
+    <script type="text/javascript">
+        function initializePlayer(videojs, myPlayer) {
+            var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+            myPlayer.on(autoPlayEvents, autoplayableListener);
+
+            // better use API search instead of getVideo one by one
+            // keep in mind that search-enable search key must be on server side for security reason
+
+            function autoplayableListener(event) {
+                // for live videos we want to listen for durationchange
+                if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+                if (event.type === 'loadedmetadata') {
+                    attemptAutoplay();
+                    myPlayer.off(autoPlayEvents, autoplayableListener);
+                }
+            }
+
+            function attemptAutoplay() {
+                var promise = myPlayer.play();
+                /* Listen for ads-ad-started, we really do anything when this is triggered */
+                myPlayer.on('ads-ad-started', function (evt) {
+                    console.log('ads-ad-started event passed to event handler', evt);
+                });
+                if (promise !== undefined) {
+                    promise.then(function () {
+                        // Autoplay started!
+                    }).catch(function (error) {
+                        myPlayer.muted(true);
+                        myPlayer.play();
+                    });
+                }
+            }
+        }
+    </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var myPlayer = videojs.getPlayer('vjs_video_3');
+        //var myPlayer = bc('vjs_video_3');
+        var loggedPlay = false;
+
+        // works: tribute, edmovieguide, winnipegmovies, frontrowcenter
+        // doesn't work: showtimes, enprimeur, tributemovies
+        var serverSite = 'tribute';
+        $('span#lblSite').text(serverSite);
+
+        // myPlayer.ima3({
+        //         timeout: 10000,
+        //         requestMode: 'ondemand'
+        // });
+
+        // myPlayer.on('ima3-ready', function () {
+        //     console.log('ima3-ready');
+        //     myPlayer.ima3.adrequest('https://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/26924457/tribute&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp];alias=tribute_player;size=480x360;key=action/adventure;kvmovieid=137928;kvmovietitle=sonic-the-hedgehog;kvclipid=25671;kvcliptitle=sonic-the-hedgehog-trailer-2;kvmature=0;kvlength=long;misc=1582983217203;aduho=-300');
+        // });
+
+        //myPlayer.ima3.settings.serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/26924457/tribute&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp];alias=showtimes_player;size=480x360;key=action/adventure;kvmovieid=137928;kvmovietitle=sonic-the-hedgehog;kvclipid=25671;kvcliptitle=sonic-the-hedgehog-trailer-2;kvmature=0;kvlength=long;misc=1583163897301;aduho=-300';
+        // myPlayer.on('ima3-ready', function() {
+        //     if (myPlayer.ima3.settings) {
+                myPlayer.ima3.settings.serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/26924457/' + serverSite + '&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp];alias=showtimes_player;size=480x360;key=action/adventure;kvmovieid=137928;kvmovietitle=sonic-the-hedgehog;kvclipid=25671;kvcliptitle=sonic-the-hedgehog-trailer-2;kvmature=0;kvlength=long;misc=1583163897301;aduho=-300';
+        //     }
+        // });
+
+        initializePlayer(videojs, myPlayer);
+    });
+</script>
+<div class="vjs-playlist-player-container">
+    <video-js id="vjs_video_3"
+              data-account="6057949425001"
+              data-player="duUkJdQq"
+              data-video-id="1650009287581049525"
+              data-embed="default"
+              controls=""
+              data-application-id=""
+              autoplay="any"
+              class="vjs-fluid"></video-js>
+</div>
+<script src="//players.brightcove.net/6057949425001/duUkJdQq_default/index.min.js"></script>
+<!-- <script src="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js"></script> -->
+
+</body>
+</html>

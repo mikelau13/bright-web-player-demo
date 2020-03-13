@@ -43,17 +43,6 @@
             var videoList;
             var videoListIndex = parseInt($.getUrlParam("videoListIndex")) || 0;
 
-            myPlayer.on('ended', function() {
-                myPlayer.off('ended');
-                var playlist = this.player().playlist;
-                if (playlist()[playlist.nextIndex()]) {
-                    //console.log('next videoList', playlist()[playlist.nextIndex()].id);
-                    window.setTimeout(function() {
-                        window.location = window.location.origin + window.location.pathname + '?videoListIndex=' + playlist.nextIndex();
-                    }, 3*1000);
-                }
-            });
-
             // better use API search instead of getVideo one by one
             // keep in mind that search-enable search key must be on server side for security reason
             
@@ -65,9 +54,54 @@
                             //myPlayer.catalog.load(videoList, function() {
                             myPlayer.on(autoPlayEvents, autoplayableListener);
                         });
+                        populateEndScreen(myPlayer);
                     });
                 });
             });
+
+
+            function populateEndScreen(myPlayer) {
+                // Adding end screen listener
+                myPlayer.on('ended', function() {
+                    // START modal codes
+                    var newElement = document.createElement('div');
+                    newElement.setAttribute("id", "endScreenContainer");
+                    newElement.setAttribute("style", "background-color: black;height:100%;width=100%;");
+
+                    var endScreenPlaylist = myPlayer.player().playlist;
+                    console.log('endScreenPlaylist', endScreenPlaylist());
+
+                    newElement.innerHTML = 
+                            '<p><strong>Counting down, 3, 2, 1 ... </strong></p>' +
+                            '<p>Playing next - ' + endScreenPlaylist()[endScreenPlaylist.nextIndex()].name + '<img src="' + endScreenPlaylist()[endScreenPlaylist.nextIndex()].thumbnail + '"/></p>'
+                    ;
+
+                    $.each(endScreenPlaylist(), function( index, value ) {
+                        if (index !== endScreenPlaylist.nextIndex()) {
+                            newElement.innerHTML += '<p>More - ' + value.name + '</p>';
+                        }
+                    });
+                
+                    //newElement.id = "theModal";
+                    var options = {};
+                    options.content = newElement;
+                    //options.label = 'labelX';
+                    options.temporary = true; // If true the modal can only be opened once; it will be disposed as soon as it's closed
+                    options.uncloseable = true; // If true the user will not be able to close the modal through the UI in the normal ways; programmatic closing is still possible
+
+                    var ModalDialog = videojs.getComponent('ModalDialog');
+                    var myModal = new ModalDialog(myPlayer, options);
+                    myPlayer.addChild(myModal);
+                    // END modal codes
+                    myModal.open();
+                    myPlayer.off('ended');
+                    if (endScreenPlaylist()[endScreenPlaylist.nextIndex()]) {
+                        window.setTimeout(function() {
+                            window.location = window.location.origin + window.location.pathname + '?videoListIndex=' + endScreenPlaylist.nextIndex();
+                        }, 3*1000);
+                    }
+                });
+            }
                     
             function autoplayableListener(event) {
                 console.log(event.type);
@@ -101,14 +135,14 @@
   <div class="vjs-playlist-player-container" style="max-width: 960px;">
 	<video-js
 		data-account="6057949425001"
-		data-player="ky26UIyke"
+		data-player="5iLQeK5T"
 		data-embed="default"
 		controls=""
 		data-application-id=""
 		class="vjs-fluid">
 	</video-js>
   </div>
-  <script src="//players.brightcove.net/6057949425001/ky26UIyke_default/index.min.js"></script>
+  <script src="//players.brightcove.net/6057949425001/5iLQeK5T_default/index.min.js"></script>
   <br/>Read this <a href="https://support.brightcove.com/brightcove-player-sample-navigate-video-end">to customize the end screen HTML</a>
   <br/>Combine with what you see in this demo, we can easily control how the video player redirects the page.
 </body>

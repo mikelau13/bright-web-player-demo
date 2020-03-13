@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>BrightcoveMedia</title>
+    <link rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" />
+    <script></script>
+</head>
+<body>
+    
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="/widget/scripts/videowidget/tributeplayer_v7.js"></script>
+<link href="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.css" rel="stylesheet">
+<script>
+    var isShowMatureDialog = false;
+    var loggedPlay = false;
+
+    // Is the currently playing media, from the original playlist list or is it from recommended media
+    //function IsFromPlayList(brightcoveId, playlist) {
+    //    var result = false;
+    //    for (var i = 0; i < playlist.length; i++) {
+    //        if (brightcoveId == playlist[i].id)
+    //            result = true;
+    //    }
+    //    return result;
+    //}
+
+    function IncrementMediaViewCount(siteId, brightcoveId, playlist) {
+        var incrementMediaViewCountURL = "//apps.tribute.ca/widget/VideoPlayer/IncrementMediaViewCount";
+        console.log('IncrementMediaViewCount');
+        try {
+            (new Image()).src = incrementMediaViewCountURL
+								+ "?siteId=" + siteId
+								+ (IsFromPlayList(brightcoveId, playlist) ? ("&mediaId=21243") : ("&cdnId=Y3cnFzaTE6hZv8q_vHIof-oQDX0Y8WwN"))
+								+ "&t=" + (new Date().getTime());
+        } catch (e) { }
+    }
+</script>
+
+    <script type="text/javascript">
+        function PlayNext(myPlayer, playlistId, brightcoveId, populateEndScreen) { }
+    </script>
+
+
+<script type="text/javascript">
+    function BindVideoPlayer() {
+        var newElement = document.createElement('div');
+        //newElement.setAttribute("id", "vjs_video_3");
+        newElement.innerHTML =
+            '<video-js id="vjs_video_3"' +
+                'data-account="6057949425001"' +
+                'data-player="3ZKkKKn1"' +
+                //'data-video-id="1650738778577117923"' +
+                'data-embed="default"' +
+                'controls=""' +
+                'data-application-id=""' +
+                //'data-playlist-id="1659613093283342265"' +
+                'class="vjs-fluid"></video-js>'
+        ;
+
+        document.getElementById("brightcove-player-container").appendChild(newElement);
+
+        $.getScript('//players.brightcove.net/6057949425001/3ZKkKKn1_default/index.min.js', function () {
+            var myPlayer = videojs.getPlayer('vjs_video_3');
+
+            myPlayer.ready(function() {
+
+                $.getScript('//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js', function () {
+
+                    myPlayer.ready(function() {
+                        
+                        var serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/26924457/frontrowcenter&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp];alias=frontrowcentre_player;size=480x360;key=none;kvmovieid=54176;kvmovietitle=the-call-of-the-wild;kvclipid=25683;kvcliptitle=the-call-of-the-wild-trailer;kvmature=0;kvlength=long;misc=1583945722339;aduho=-240';
+                        myPlayer.ima3.settings.serverUrl = serverUrl;
+
+                        myPlayer.on('loadstart', function () {
+                            if (myPlayer.mediainfo && myPlayer.mediainfo.customFields) {
+                                myPlayer.mediainfo.customFields.genreName = '';
+                            }
+                        });
+
+                        populateEndScreen(myPlayer, '1659613093283342265', '1650738778577117923');
+                    });
+                }); // $.getScript ima3
+            }); //  myPlayer.ready
+        }); // $.getScript index.min.js
+    }
+
+    function populateEndScreen(myPlayer, playlistId, brightcoveId) {
+        myPlayer.catalog.getVideo(brightcoveId, function(error, video) {
+            myPlayer.catalog.getPlaylist(playlistId, function (error, endScreenPlaylist) {
+                myPlayer.on('play', function () {
+                    if (!loggedPlay) {
+                        loggedPlay = true;
+                        IncrementMediaViewCount('4', brightcoveId, endScreenPlaylist);
+                    }
+                });
+                //endScreenPlaylist.unshift(video);
+                //console.log('endScreenPlaylist', endScreenPlaylist);
+                //myPlayer.playlist(endScreenPlaylist, 0);
+                //myPlayer.playlist.autoadvance(5); // Null - Resets and cancels the auto advance
+                //initializePlayer(myPlayer);
+                //myPlayer.on(autoPlayEvents, autoplayableListener);
+
+                // ## START playlist
+                var videoListIndex = -1;
+                $.each(endScreenPlaylist, function (index, value) {
+                    if (value.id === brightcoveId) {
+                        videoListIndex = index;
+                    }
+                });
+                if (videoListIndex < 0) {
+                    videoListIndex = 0;
+                    endScreenPlaylist.unshift(video);
+                }
+
+                console.log('endScreenPlaylist', endScreenPlaylist);
+                myPlayer.playlist(endScreenPlaylist, videoListIndex);
+                myPlayer.playlist.autoadvance(5); // Null - Resets and cancels the auto advance
+                initializePlayer(myPlayer);
+                //myPlayer.on(autoPlayEvents, autoplayableListener);
+
+                var loopIndex = videoListIndex;
+                var nextIndex = videoListIndex + 1;
+                var isNext = true;
+                for (var i = 0; i < endScreenPlaylist.length; i++) {
+                    if (endScreenPlaylist[loopIndex].id !== brightcoveId) {
+                        if (isNext) {
+                            isNext = false;
+                            nextIndex = loopIndex;
+                            //newElement.innerHTML += '<p>PLAYING NEXT <img src="' + endScreenPlaylist[loopIndex].thumbnail + '"/>' + endScreenPlaylist[loopIndex].name + '</p>';
+                        } else {
+                            //newElement.innerHTML += '<p>More - ' + endScreenPlaylist[loopIndex].name + '</p>';
+                        }
+                    }
+                    loopIndex++;
+                    if (loopIndex >= endScreenPlaylist.length) loopIndex = 0;
+                }
+
+                //var options = {};
+                //options.content = newElement;
+                //options.temporary = true; // If true the modal can only be opened once; it will be disposed as soon as it's closed
+                //options.uncloseable = true; // If true the user will not be able to close the modal through the UI in the normal ways; programmatic closing is still possible
+
+                //var ModalDialog = videojs.getComponent('ModalDialog');
+                //var myModal = new ModalDialog(myPlayer, options);
+                //myPlayer.addChild(myModal);
+                //// END modal codes
+                //myModal.open();
+                //myPlayer.off('ended');
+
+                // end of screen redirections
+                if (nextIndex >= endScreenPlaylist.length) nextIndex = 0;
+
+                //myPlayer.playlist.currentItem(videoListIndex);
+                var parentDiscovery = {};
+                if (endScreenPlaylist[nextIndex]) {
+                    var nextId = endScreenPlaylist[nextIndex].id;
+                    //window.setTimeout(function () {
+                    $.ajax('//apps.tribute.ca/widget/VideoPlayer/GetDispatchUrl?siteId=' + 4 + '&brightcoveId=' + nextId, {
+                        success: function (data) {
+                            var result = JSON.parse(data);
+                            console.log('result', result);
+                            if (result) {
+                                //var parentDiscovery = {};
+                                parentDiscovery.action = 'parentDiscovery';
+                                parentDiscovery.nextUrl = result;
+                                //$(document).trigger("OnPlayNextMedia", parentDiscovery);
+                                //PlayNext(myPlayer, playlistId, nextId, populateEndScreen);
+                                //myModal.close();
+                            } else {
+                                //myPlayer.catalog.getVideo(endScreenPlaylist[nextIndex], function (error, video) {
+                                //    myPlayer.catalog.load(video);
+                                //    myPlayer.play();
+                                //});
+                            }
+                        },
+                        error: function(xhr, status, error){
+                            var errorMessage = xhr.status + ': ' + xhr.statusText
+                            console.log('Error - ' + errorMessage);
+                        }
+                    });
+                    //}, 3 * 1000);
+                }
+
+                myPlayer.on("beforeplaylistitem", function() {
+                    if (parentDiscovery.nextUrl){
+                        myPlayer.dispose();
+                        $(document).trigger("OnPlayNextMedia", parentDiscovery);
+                    } // else, play the next video here
+                    //PlayNext(myPlayer, playlistId, nextId, populateEndScreen);
+                }); // beforeplaylistitem
+            });
+        });
+
+
+        
+    }
+    function initializePlayer(myPlayer) {
+        var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+        if (1 === 1){
+            myPlayer.on(autoPlayEvents, autoplayableListener);
+        }
+
+        function autoplayableListener(event) {
+            if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                attemptAutoplay();
+                myPlayer.off(autoPlayEvents, autoplayableListener);
+            }
+            if (event.type === 'loadedmetadata') {
+                attemptAutoplay();
+                myPlayer.off(autoPlayEvents, autoplayableListener);
+            }
+        }
+
+        function attemptAutoplay() {
+            var promise = myPlayer.play();
+            if (promise !== undefined) {
+                promise.then(function () {
+                    // Autoplay started!
+                }).catch(function (error) {
+                    myPlayer.muted(true);
+                    myPlayer.play();
+                });
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (isShowMatureDialog) {
+            BindMatureDialog();
+        } else {
+            BindVideoPlayer();
+        }        
+    });
+</script>
+<div class="vjs-playlist-player-container" id="brightcove-player-container"></div>
+    
+
+</body>
+</html>
