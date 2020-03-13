@@ -1,0 +1,119 @@
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
+<body>
+  <h1><a href="playlist06.html">Click to have "user interaction"</a></h1>
+  <h2><a href="1650009287581049525.html">Click to watch 1650009287581049525 - Sonic the Hedgehog</a></h2>
+  <div class="vjs-playlist-player-container" id="brightcove-player-container"></div>
+  <script type="text/javascript">
+    function BindVideoPlayer() {
+        var newElement = document.createElement('video-js');
+        newElement.setAttribute("id", "vjs_video_3");
+        newElement.setAttribute("data-account", "6057949425001");
+        newElement.setAttribute("data-player", "3ZKkKKn1");
+        newElement.setAttribute("data-embed", "default");
+        newElement.setAttribute("controls", "");
+        newElement.setAttribute("data-application-id", "");
+        newElement.setAttribute("class", "vjs-fluid");
+
+        document.getElementById("brightcove-player-container").appendChild(newElement);
+
+        $.getScript('//players.brightcove.net/6057949425001/3ZKkKKn1_default/index.min.js', function () {
+
+            var myPlayer = videojs.getPlayer('vjs_video_3');
+
+            myPlayer.ready(function() {
+
+                //var serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator=';
+                var serverUrl = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/26924457/tribute&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp];alias=tribute_player;size=480x360;key=action/adventure;kvmovieid=137928;kvmovietitle=sonic-the-hedgehog;kvclipid=25671;kvcliptitle=sonic-the-hedgehog-trailer-2;kvmature=0;kvlength=long;misc=1583930474009;aduho=-240';
+                //$.getScript('//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js', function () {
+                    myPlayer.ima3.settings.serverUrl = serverUrl;
+                    
+                    myPlayer.on('loadstart', function () {
+                        if (myPlayer.mediainfo && myPlayer.mediainfo.customFields) {
+                            myPlayer.mediainfo.customFields.genreName = 'Drama';
+                        }
+                    });
+
+                    myPlayer.on('ima3-loaded', function () { console.log('ima3-loaded!!!'); });
+                    myPlayer.on('ima3-started', function () { console.log('ima3-started!!!'); });
+                    myPlayer.on('ima3-hardtimeout', function () { console.log('ima3-hardtimeout!!!'); });
+                    myPlayer.on('ima3-ad-error', function (error) { console.log('ima3-ad-error!!!', error); });
+                    myPlayer.on('ima3-loaded', function () { console.log('ima3-loaded!!!'); });
+
+                    myPlayer.on('ima3-ready', function () {
+                        console.log('ima3-ready!!!');
+                        //myPlayer.ima3.adrequest();
+                        //myPlayer.ima3.adrequest('https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator=');
+                        //myPlayer.ima3.adrequest('https://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/26924457/tribute&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[timestamp];alias=tribute_player;size=480x360;key=action/adventure;kvmovieid=137928;kvmovietitle=sonic-the-hedgehog;kvclipid=25671;kvcliptitle=sonic-the-hedgehog-trailer-2;kvmature=0;kvlength=long;misc=1583930474009;aduho=-240');
+                        // myPlayer.ima3({
+                        //     debug: true,
+                        //     serverUrl: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator='
+                        // });
+                    });
+                
+                    var autoPlayEvents = ['loadedmetadata', 'durationchange'];
+
+                    myPlayer.catalog.getVideo("6075421706001", function(error, video) {
+                        myPlayer.catalog.getPlaylist('1659613093283342265', function (error, endScreenPlaylist) {
+                            endScreenPlaylist.unshift(video);
+                            myPlayer.playlist(endScreenPlaylist, 0);
+                            myPlayer.playlist.autoadvance(5); // if Null - Resets and cancels the auto advance
+
+                            myPlayer.on(autoPlayEvents, autoplayableListener);
+                            myPlayer.on("beforeplaylistitem", function(y, nextVideo) {
+                                console.log('nextVideo', nextVideo);
+                                myPlayer.dispose(); // to ensure the player won't start playing the next video before the URL redirection
+                                if (window.self !== window.parent)
+                                    window.open("playlist06.html?id=" + nextVideo.id, "_parent");
+                                else
+                                    window.open("playlist06.html?id=" + nextVideo.id, "_self");
+                            });
+                            myPlayer.on('ended', function() {
+                                console.log('ended');
+                                //var nextVidObject = myPlayer.playlist.next();
+                                //myPlayer.off('ended');
+                            });
+                        });
+                    });
+
+                    function sleep(ms) {
+                        return new Promise(resolve => setTimeout(resolve, ms));
+                    }
+
+                    function autoplayableListener(event) {
+                        console.log(event.type);
+                        // for live videos we want to listen for durationchange
+                        if (event.type === 'durationchange' && myPlayer.duration() === Infinity) {
+                            attemptAutoplay();
+                            myPlayer.off(autoPlayEvents, autoplayableListener);
+                        }
+                        if (event.type === 'loadedmetadata') {
+                            attemptAutoplay();
+                            myPlayer.off(autoPlayEvents, autoplayableListener);
+                        }
+                    }
+                
+                    function attemptAutoplay() {
+                        var promise = myPlayer.play();
+                        if (promise !== undefined) {
+                            promise.then(function () {
+                            // Autoplay started!
+                            }).
+                            catch (function (error) {
+                                console.log('Autoplay was prevented, write codes here to handle.');
+                            });
+                        }
+                    }
+                //}); // getScript ima3
+            })
+        }); // getScript index.min.js
+    } // BindVideoPlayer
+
+    $(document).ready(function() {
+        BindVideoPlayer();
+    });
+</script>
+</body>
+</html>
